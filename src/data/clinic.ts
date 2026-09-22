@@ -1,4 +1,21 @@
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+function getSiteUrl(): string {
+  const raw =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "") ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "") ||
+    "http://localhost:3000";
+
+  const trimmed = raw.trim();
+  if (!trimmed) return "http://localhost:3000";
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+  return `https://${trimmed}`;
+}
+
+export const SITE_URL = getSiteUrl();
 export const SHOW_DEMO_FLAGS = false;
 
 const lat = 18.9896839;

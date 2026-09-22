@@ -41,8 +41,16 @@ const notoDeva = localFont({
 
 const description = `Book a dental appointment at ${clinic.name}, ${addressOneLine}. ${clinic.doctor.name}, ${clinic.doctor.qualification}. ${clinic.hours.displayDays}, ${clinic.hours.displaySessions.join(" and ")}.`;
 
+function getMetadataBase(): URL {
+  try {
+    return new URL(SITE_URL);
+  } catch {
+    return new URL("http://localhost:3000");
+  }
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: getMetadataBase(),
   title: {
     default: `${clinic.name} — ${clinic.doctor.name}, ${clinic.doctor.title}`,
     template: `%s | ${clinic.name}`,
