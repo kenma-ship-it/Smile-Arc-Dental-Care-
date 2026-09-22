@@ -1,0 +1,517 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Design tokens - three layers
+   1. Primitives  : raw values sampled from the clinic logo and signboard
+   2. Semantic    : what a colour is *for* (text, surface, border, primary...)
+   3. Component   : per-component overrides (buttons, chips, slider handle)
+   Tailwind utilities read the primitives via @theme; components read layers 2-3.
+   ========================================================================== */
+
+@theme {
+  /* --- 1. Primitives ---------------------------------------------------- */
+  --color-paper: #fafcfb;
+  --color-surface: #ffffff;
+  --color-primary: #235f92;
+  --color-accent: #1b6549;
+  --color-mint: #eef7f3;
+  --color-ice: #eaf3fa;
+  --color-night: #0f2530;
+  --color-night-2: #173540;
+
+  --color-ink: #0f2530;
+  --color-ink-soft: #35525e;
+  --color-muted: #4a6672;
+  --color-line: #d3e1e5;
+  --color-line-soft: #e6eff1;
+  --color-mist: #a9c0c9;
+
+  /* logo green */
+  --color-leaf-100: #ddf1e8;
+  --color-leaf-300: #7cc4a3;
+  --color-leaf-500: #2f9a70;
+  --color-leaf-600: #23805c;
+  --color-leaf-700: #1b6549;
+  /* logo blue */
+  --color-tide-100: #dcebf7;
+  --color-tide-300: #8cc2ee;
+  --color-tide-500: #3f93d3;
+  --color-tide-700: #235f92;
+  --color-tide-800: #1c4e78;
+
+  --color-danger: #a8231b;
+  --color-danger-soft: #fbecea;
+  --color-flag: #fff3d1;
+  --color-flag-ink: #6b4a00;
+
+  --font-display: var(--font-newsreader), "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-brand: var(--font-marcellus), "Trajan Pro", "Times New Roman", serif;
+  --font-deva: var(--font-noto-deva), "Noto Sans Devanagari", "Nirmala UI", sans-serif;
+
+  --radius-card: 0.625rem;
+  --radius-field: 0.75rem;
+
+  --shadow-lift: 0 1px 2px rgb(15 37 48 / 0.05), 0 12px 32px -12px rgb(15 37 48 / 0.18);
+  --shadow-panel: 0 1px 0 rgb(15 37 48 / 0.04), 0 30px 60px -30px rgb(15 37 48 / 0.28);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ==========================================================================
+   Dark theme - same token names, night-clinic palette.
+   Applied by data-theme="dark" on <html> (set before paint by an inline script).
+   Every text/background pair below was checked for WCAG AA contrast.
+   ========================================================================== */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #0c171c;
+  --color-surface: #13232a;
+  --color-mint: #0f221c;
+  --color-ice: #0f1e27;
+  --color-night: #060e12;
+  --color-night-2: #0b181e;
+
+  --color-ink: #e9f2f4;
+  --color-ink-soft: #c5d6dc;
+  --color-muted: #9fb6bf;
+  --color-line: #27434e;
+  --color-line-soft: #1b3039;
+  --color-mist: #7d97a1;
+
+  --color-leaf-100: #163b2e;
+  --color-leaf-300: #6cc79f;
+  --color-leaf-500: #45b886;
+  --color-leaf-600: #5cc898;
+  --color-leaf-700: #1f7a57;
+  --color-tide-100: #16344b;
+  --color-tide-300: #93c8f0;
+  --color-tide-500: #5aa7e2;
+  --color-tide-700: #2b6fa6;
+  --color-tide-800: #22598a;
+
+  --color-primary: #86bff0;
+  --color-accent: #6fd3a6;
+
+  --color-danger: #ff9b8f;
+  --color-danger-soft: #3b1c19;
+
+  --shadow-lift: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -12px rgb(0 0 0 / 0.6);
+  --shadow-panel: 0 1px 0 rgb(0 0 0 / 0.25), 0 30px 60px -30px rgb(0 0 0 / 0.7);
+}
+
+/* Smooth theme change. The View Transitions API (see ThemeToggle) handles the
+   circular reveal; this is the fallback for browsers without it. */
+html.theme-switching,
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after {
+  transition:
+    background-color 0.45s var(--ease-out-soft),
+    border-color 0.45s var(--ease-out-soft),
+    color 0.45s var(--ease-out-soft),
+    fill 0.45s var(--ease-out-soft) !important;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+:root {
+  /* --- 2. Semantic ------------------------------------------------------ */
+  --surface: var(--color-paper);
+  --surface-wash-green: var(--color-mint);
+  --surface-wash-blue: var(--color-ice);
+  --surface-inverse: var(--color-night);
+  --text: var(--color-ink);
+  --text-muted: var(--color-muted);
+  --text-inverse: #ffffff;
+  --text-inverse-muted: #a9c0c9;
+  --border: var(--color-line);
+  --border-soft: var(--color-line-soft);
+  --primary: var(--color-primary);
+  --primary-strong: var(--color-tide-800);
+  --accent: var(--color-leaf-600);
+  --success: var(--color-leaf-700);
+  --focus-ring: var(--color-tide-500);
+
+  /* --- 3. Component ----------------------------------------------------- */
+  --btn-primary-bg: var(--color-tide-700);
+  --btn-primary-fg: #ffffff;
+  --btn-quiet-border: var(--color-ink);
+  --btn-height: 3rem;
+  --chip-bg: rgb(15 37 48 / 0.72);
+  --slider-line: #ffffff;
+  --slider-ring: linear-gradient(135deg, var(--color-leaf-300), var(--color-tide-300));
+  --header-height: 4.5rem;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+@layer base {
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.018em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+}
+
+p {
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--color-leaf-100);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.on-dark :focus-visible {
+  outline-color: var(--color-tide-300);
+}
+
+section[id] {
+  scroll-margin-top: calc(var(--header-height) + 0.5rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==========================================================================
+   Layout + type helpers
+   ========================================================================== */
+
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .wrap {
+      padding-inline: 2rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .wrap {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  .section-pad {
+    padding-block: 5rem;
+  }
+  @media (min-width: 1024px) {
+    .section-pad {
+      padding-block: 7.5rem;
+    }
+  }
+
+  /* Rail layout: sticky title on the left, content on the right */
+  .rail {
+    display: grid;
+    gap: 2.5rem;
+  }
+  @media (min-width: 1024px) {
+    .rail {
+      grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);
+      gap: 4.5rem;
+    }
+    .rail > .rail-head {
+      position: sticky;
+      top: calc(var(--header-height) + 2rem);
+      align-self: start;
+    }
+  }
+
+  .h-display {
+    font-size: clamp(2.5rem, 1.6rem + 4.6vw, 5rem);
+    line-height: 1.02;
+    letter-spacing: -0.028em;
+  }
+  .h-section {
+    font-size: clamp(1.9rem, 1.35rem + 2.2vw, 3rem);
+    line-height: 1.08;
+  }
+  .h-card {
+    font-size: clamp(1.35rem, 1.2rem + 0.6vw, 1.7rem);
+    line-height: 1.15;
+  }
+  .lede {
+    font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+    line-height: 1.6;
+    color: var(--text-muted);
+    max-width: 38rem;
+  }
+  .prose-measure {
+    max-width: 38rem;
+  }
+  .label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: var(--text-muted);
+  }
+  .on-dark .label {
+    color: var(--text-inverse-muted);
+  }
+  .deva {
+    font-family: var(--font-deva);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Buttons                                                             */
+  /* ------------------------------------------------------------------ */
+  .btn {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: var(--btn-height);
+    padding: 0 1.5rem;
+    border-radius: 999px;
+    border: 1.5px solid transparent;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    overflow: hidden;
+    transition:
+      color 0.25s var(--ease-out-soft),
+      background-color 0.25s var(--ease-out-soft),
+      border-color 0.25s var(--ease-out-soft),
+      box-shadow 0.25s var(--ease-out-soft);
+  }
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .btn-lg {
+    --btn-height: 3.5rem;
+    padding: 0 1.9rem;
+    font-size: 1rem;
+  }
+  .btn-sm {
+    --btn-height: 2.75rem;
+    padding: 0 1.15rem;
+  }
+
+  .btn-primary {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-fg);
+  }
+  .btn-primary::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(100deg, var(--color-tide-700) 0%, var(--color-leaf-700) 100%);
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out-soft);
+  }
+  .btn-primary:hover:not(:disabled)::before,
+  .btn-primary:focus-visible::before {
+    opacity: 1;
+  }
+
+  .btn-quiet {
+    background: transparent;
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--btn-quiet-border) 28%, transparent);
+  }
+  .btn-quiet:hover:not(:disabled) {
+    border-color: var(--btn-quiet-border);
+    background: rgb(15 37 48 / 0.04);
+  }
+  .on-dark .btn-quiet {
+    color: #fff;
+    --btn-quiet-border: #ffffff;
+  }
+  .on-dark .btn-quiet:hover:not(:disabled) {
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .btn-light {
+    background: #fff;
+    color: #0f2530;
+  }
+  .btn-light:hover:not(:disabled) {
+    background: #ddf1e8;
+  }
+
+  .link {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.22em;
+    text-decoration-color: color-mix(in srgb, var(--primary) 35%, transparent);
+    transition: text-decoration-color 0.2s;
+  }
+  .link:hover {
+    text-decoration-color: currentColor;
+  }
+  .on-dark .link {
+    color: var(--color-tide-300);
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Form fields                                                          */
+  /* ------------------------------------------------------------------ */
+  .field {
+    width: 100%;
+    min-height: 3.25rem;
+    padding: 0.8rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-field);
+    background: var(--color-surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 1rem;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .field::placeholder {
+    color: #7b929b;
+  }
+  .field:hover {
+    border-color: var(--color-mist);
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-tide-500);
+    box-shadow: 0 0 0 4px rgb(63 147 211 / 0.18);
+  }
+  .field[aria-invalid="true"] {
+    border-color: var(--color-danger);
+    background: var(--color-danger-soft);
+  }
+  textarea.field {
+    min-height: 7rem;
+    resize: vertical;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Small flag for placeholder / sample content                          */
+  /* ------------------------------------------------------------------ */
+  .flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    background: var(--color-flag);
+    color: var(--color-flag-ink);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .hairline {
+    height: 1px;
+    background: var(--border);
+    border: 0;
+  }
+  .on-dark .hairline {
+    background: rgb(255 255 255 / 0.14);
+  }
+}
+
+/* Soft top/bottom fade for the scrolling review wall */
+.fade-y {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+}
+
+/* Slot + date buttons need a predictable tap target */
+.tap {
+  min-height: 2.75rem;
+}
+
+/* Hide scrollbars on the sample-day strip without removing scroll */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==========================================================================
+   Review marquee
+   ========================================================================== */
+@keyframes marquee-left {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes marquee-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+.marquee-track {
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+.marquee-fade:hover .marquee-track,
+.marquee-track:hover,
+.marquee-track:active {
+  animation-play-state: paused !important;
+}
+.marquee-fade {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none !important; transform: none !important; }
+}
